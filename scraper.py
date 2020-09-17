@@ -1,7 +1,3 @@
-# This is a template for a Python scraper on morph.io (https://morph.io)
-# including some code snippets below that you should find helpful
-
-import scraperwiki
 import requests
 import pandas as pd
 from sqlalchemy import create_engine
@@ -14,17 +10,8 @@ engine = create_engine('sqlite:///data.sqlite', echo=True)
 sqlite_connection = engine.connect()
 sqlite_table = "data"
 df.to_sql(sqlite_table, sqlite_connection, if_exists='replace')
+
+# Set up views for easier exports
+sqlite_connection.execute('CREATE VIEW "countries" AS select * from "data" where ("Score" is not NULL) ORDER BY Score ASC limit 40')
+sqlite_connection.execute('CREATE VIEW "regions" AS SELECT "Country", "Weight", "CAPE", "PE", "PC", "PB", "PS", "DY", "RS 26W", "RS 52W" from "data" WHERE ("index" > "0") AND ("Score" IS NULL) ORDER BY "Weight DESC"')
 sqlite_connection.close()
-
-
-# # Write out to the sqlite database using scraperwiki library
-# scraperwiki.sqlite.save(unique_keys=['name'], data={"name": "susan", "occupation": "software developer"})
-#
-# # An arbitrary query against the database
-# scraperwiki.sql.select("* from data where 'name'='peter'")
-
-# You don't have to do things with the ScraperWiki and lxml libraries.
-# You can use whatever libraries you want: https://morph.io/documentation/python
-# All that matters is that your final data is written to an SQLite database
-# called "data.sqlite" in the current working directory which has at least a table
-# called "data".
